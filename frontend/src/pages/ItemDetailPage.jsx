@@ -6,6 +6,9 @@ import { useAuth } from '../context/AuthContext'
 import MovementsPanel from '../components/MovementsPanel'
 import ItemForm from '../components/ItemForm'
 
+const [showMove, setShowMove] = useState(false)
+const [showQty, setShowQty]   = useState(false)
+
 function DetailRow({ icon: Icon, label, value }) {
   if (!value && value !== 0) return null
   return (
@@ -72,36 +75,47 @@ export default function ItemDetailPage() {
           <ArrowLeft size={14} />
           Volver
         </button>
-        <div className="flex items-center gap-2">
-          {isEditor && (
-            <button
-              onClick={() => setShowEdit(true)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors"
-              style={{
-                border: '1px solid var(--color-border)',
-                background: 'var(--color-surface)',
-                color: 'var(--color-text-muted)'
-              }}
-            >
-              <Pencil size={13} />
-              Editar
-            </button>
-          )}
-          {isAdmin && (
-            <button
-              onClick={handleDelete}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors"
-              style={{
-                border: '1px solid var(--color-error)',
-                background: 'var(--color-surface)',
-                color: 'var(--color-error)'
-              }}
-            >
-              <Trash2 size={13} />
-              Eliminar
-            </button>
-          )}
-        </div>
+      <div className="flex items-center gap-2">
+        {/* Todos los usuarios */}
+        <button
+          onClick={() => setShowMove(true)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors"
+          style={{ border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text-muted)' }}
+        >
+          <MapPin size={13} />
+          Mover
+        </button>
+        <button
+          onClick={() => setShowQty(true)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors"
+          style={{ border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text-muted)' }}
+        >
+          <Layers size={13} />
+          Cantidad
+        </button>
+
+        {/* Solo admin */}
+        {isAdmin && (
+          <button
+            onClick={() => setShowEdit(true)}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors"
+            style={{ border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text-muted)' }}
+          >
+            <Pencil size={13} />
+            Editar
+          </button>
+        )}
+        {isAdmin && (
+          <button
+            onClick={handleDelete}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors"
+            style={{ border: '1px solid var(--color-error)', background: 'var(--color-surface)', color: 'var(--color-error)' }}
+          >
+            <Trash2 size={13} />
+            Eliminar
+          </button>
+        )}
+      </div>
       </div>
 
       {/* Contenido principal */}
@@ -189,6 +203,8 @@ export default function ItemDetailPage() {
         </div>
 
       </div>
+      {showMove && <MoveItemModal item={item} onClose={() => setShowMove(false)} />}
+      {showQty  && <ChangeQuantityModal item={item} onClose={() => setShowQty(false)} />}
 
       {showEdit && (
         <ItemForm item={item} onClose={() => setShowEdit(false)} />

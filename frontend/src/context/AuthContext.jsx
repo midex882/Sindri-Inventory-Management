@@ -20,35 +20,39 @@ export function AuthProvider({ children }) {
       try {
         const { data: { session } } = await supabase.auth.getSession()
         if (!mounted) return
-
-        if (session?.user) {
-          setUser(session.user)
-          try {
-            const { data } = await authApi.getMe()
-            if (mounted) setProfile(data)
-          } catch {
-            if (mounted) setProfile(null)
-          }
-        } else {
+        if (!session?.user) {
           setUser(null)
           setProfile(null)
+          setLoading(false)
         }
       } catch {
         if (mounted) {
           setUser(null)
           setProfile(null)
+          setLoading(false)
         }
-      } finally {
-        if (mounted) setLoading(false)
       }
     }
 
     init()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         if (!mounted) return
         console.log('Auth event:', event)
+
+        if (event === 'INITIAL_SESSION' && session?.user) {
+          setUser(session.user)
+          try {
+            const { data } = await authApi.getMe()
+            if (mounted) setProfile(data)
+          } catch (e) {
+            console.error('getMe error:', e.response?.status, e.response?.data)
+            if (mounted) setProfile(null)
+          } finally {
+            if (mounted) setLoading(false)
+          }
+        }
 
         if (event === 'SIGNED_OUT') {
           setUser(null)
@@ -68,11 +72,35 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  const isAdmin = profile?.role === 'admin'
+  const isViewer   = profile?.role === 'viewer'
+  const isFamilia  = profile?.familia === true   // columna 'familia' bool en tu tabla profiles
+  const isEditor   = isAdmin                     // solo admin puede editar/añadir/borrar
+
   const value = {
     user,
     profile,
     loading,
     setProfile,
+    logout,
+    isAdmin,
+    isViewer,
+    isFamilia,
+    isEditor,
+    loginWithGoogle,
+  }
+
+  async function logout() {
+    await supabase.auth.signOut()
+  }
+
+  async function loginWithGoogle() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/items'
+      }
+    })
   }
 
   return (

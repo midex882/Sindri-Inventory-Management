@@ -9,6 +9,7 @@ const navItems = [
 
 export default function Sidebar() {
   const { profile, logout, isAdmin } = useAuth()
+    console.log('Sidebar profile:', profile)
   const navigate = useNavigate()
   const [accountOpen, setAccountOpen] = useState(false)
 
@@ -85,15 +86,22 @@ export default function Sidebar() {
           onClick={() => setAccountOpen(!accountOpen)}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 hover:bg-[var(--color-surface-offset)]"
         >
-          <div
-            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-semibold"
-            style={{
-              background: 'var(--color-primary-highlight)',
-              color: 'var(--color-primary)'
-            }}
-          >
-            {profile?.email?.[0]?.toUpperCase() ?? '?'}
-          </div>
+        <div className="w-7 h-7 rounded-full shrink-0 overflow-hidden">
+          {profile?.avatar_url
+            ? <img
+                src={profile.avatar_url}
+                alt="avatar"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            : <div
+                className="w-full h-full flex items-center justify-center text-xs font-semibold"
+                style={{ background: 'var(--color-primary-highlight)', color: 'var(--color-primary)' }}
+              >
+                {profile?.email?.[0]?.toUpperCase() ?? '?'}
+              </div>
+          }
+        </div>
           <div className="flex-1 text-left min-w-0">
             <p className="text-xs font-medium text-[var(--color-text)] truncate">
               {profile?.full_name ?? profile?.email ?? '—'}
@@ -120,5 +128,7 @@ export default function Sidebar() {
         )}
       </div>
     </aside>
+    
   )
+  
 }

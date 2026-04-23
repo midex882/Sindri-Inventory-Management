@@ -17,8 +17,33 @@ def get_me(current_user: dict = Depends(get_current_user)):
     )
     if not result.data:
         raise HTTPException(status_code=404, detail="Perfil no encontrado")
-    return result.data
 
+    profile = result.data
+    avatar_from_token = current_user.get("avatar_url", "")
+
+    if not profile.get("avatar_url") and avatar_from_token:
+        supabase.table("profiles").update(
+            {"avatar_url": avatar_from_token}
+        ).eq("id", current_user["id"]).execute()
+        profile["avatar_url"] = avatar_from_token
+
+    return profile
+    supabase = get_supabase_client()
+    result = (
+        supabase.table("profiles")
+        .select("*")
+        .eq("id", current_user["id"])
+        .single()
+        .execute()
+    )
+    if not result.data:
+        raise HTTPException(status_code=404, detail="Perfil no encontrado")
+    
+    profile = result.data
+    if not profile.get("avatar_url") and current_user.get("avatar_url"):
+        profile["avatar_url"] = current_user.get("avatar_url")
+    
+    return profile
 @router.get("/users")
 def get_users(current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "admin":
