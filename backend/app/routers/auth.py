@@ -71,3 +71,23 @@ def update_user_role(
         .execute()
     )
     return result.data[0]
+
+@router.patch("/users/{user_id}/familia")
+def update_user_familia(
+    user_id: str,
+    body: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    if current_user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Solo administradores")
+    familia = body.get("familia")
+    if not isinstance(familia, bool):
+        raise HTTPException(status_code=400, detail="El campo familia debe ser booleano")
+    supabase = get_supabase_client()
+    result = (
+        supabase.table("profiles")
+        .update({"familia": familia})
+        .eq("id", user_id)
+        .execute()
+    )
+    return result.data[0]

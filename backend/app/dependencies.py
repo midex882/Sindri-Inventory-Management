@@ -6,6 +6,8 @@ import httpx
 import json
 from functools import lru_cache
 from app.config import get_settings
+from app.services.supabase import get_supabase_client
+
 
 security = HTTPBearer()
 
@@ -46,16 +48,33 @@ def get_current_user(
             options={"verify_aud": False}
         )
         user_id: str = payload.get("sub")
-        user_role: str = payload.get("user_role", "viewer")
-        user_metadata = payload.get("user_metadata", {})
-        avatar_url: str = user_metadata.get("picture", "")
 
         if user_id is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token inválido"
             )
-        return {"id": user_id, "role": user_role, "avatar_url": avatar_url}
+
+        # Leer rol real desde la tabla profiles
+        supabase = get_supabase_client()
+        profile = supabase.table("profiles").select("role, familia").eq("id", user_id).single().execute()
+
+        if not profile.data:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Perfil no encontrado"
+            )
+
+        user_metadata = payload.get("user_metadata", {})
+        avatar_url = user_metadata.get("picture", "")
+
+        return {
+            "id": user_id,
+            "role": profile.data["role"],
+            "familia": profile.data.get("familia", False),
+            "avatar_url": avatar_url
+        }
+
     except JWTError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
