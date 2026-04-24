@@ -107,7 +107,7 @@ export default function ItemForm({ item = null, onClose }) {
     e.preventDefault()
     const payload = { ...form, cantidad: Number(form.cantidad) }
     if (isEditing) {
-      await updateItem.mutateAsync({ id: item.id, data: payload })
+      await updateItem.mutateAsync({ id: item.id, ...payload })
     } else {
       await createItem.mutateAsync(payload)
     }

@@ -27,13 +27,14 @@ export function useCreateItem() {
 
 export function useUpdateItem() {
   const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: ({ id, data }) => itemsApi.update(id, data).then(r => r.data),
-    onSuccess: (_, { id }) => {
+    mutationFn: ({ id, ...data }) => itemsApi.update(id, data),
+    onSuccess: (_, variables) => {
+      // Actualiza la caché del listado y del detalle individual
       queryClient.invalidateQueries({ queryKey: ['items'] })
-      queryClient.invalidateQueries({ queryKey: ['items', id] })
-      queryClient.invalidateQueries({ queryKey: ['movements', id] })
-    },
+      queryClient.invalidateQueries({ queryKey: ['item', variables.id] })
+    }
   })
 }
 

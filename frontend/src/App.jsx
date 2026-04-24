@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import LoginPage from './pages/LoginPage'
 import ItemsPage from './pages/ItemsPage'
 import ItemDetailPage from './pages/ItemDetailPage'
+import UsersPage from './pages/UsersPage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -41,6 +42,7 @@ export default function App() {
           <Route index element={<Navigate to="/items" replace />} />
           <Route path="items" element={<ItemsPage />} />
           <Route path="items/:id" element={<ItemDetailPage />} />
+          <Route path="users" element={<UsersPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

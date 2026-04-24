@@ -21,8 +21,15 @@ export default function AISearch({ onClose }) {
     try {
       const { data } = await aiApi.identify(file)
       setResult(data)
-    } catch {
-      setError('No se pudo analizar la imagen. Inténtalo de nuevo.')
+    } catch (e) {
+      const status = e?.response?.status
+      if (status === 503) {
+        setError('El servicio de IA está saturado en este momento. Inténtalo en unos segundos.')
+      } else if (status === 429) {
+        setError('Se ha superado el límite de peticiones. Espera un momento e inténtalo de nuevo.')
+      } else {
+        setError('No se pudo analizar la imagen. Inténtalo de nuevo.')
+      }
     } finally {
       setLoading(false)
     }
@@ -132,16 +139,25 @@ export default function AISearch({ onClose }) {
           {result && (
             <div className="flex flex-col gap-3">
               <div
-                className="flex items-center gap-2 px-4 py-3 rounded-lg"
+                className="flex flex-col gap-1.5 px-4 py-3 rounded-lg"
                 style={{ background: 'var(--color-primary-highlight)' }}
               >
-                <Sparkles size={14} className="text-[var(--color-primary)]" />
-                <p className="text-sm" style={{ color: 'var(--color-text)' }}>
-                  Objeto detectado:{' '}
-                  <span style={{ fontWeight: 600, color: 'var(--color-primary)' }}>
-                    {result.objeto_detectado}
-                  </span>
-                </p>
+                <div className="flex items-center gap-2">
+                  <Sparkles size={14} className="text-[var(--color-primary)]" />
+                  <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+                    Detectado: <span style={{ color: 'var(--color-primary)' }}>{result.objeto_detectado}</span>
+                  </p>
+                </div>
+                {result.palabras_clave?.length > 1 && (
+                  <div className="flex flex-wrap gap-1.5 mt-1">
+                    {result.palabras_clave.map(p => (
+                      <span key={p} className="text-xs px-2 py-0.5 rounded-full"
+                        style={{ background: 'var(--color-surface)', color: 'var(--color-text-muted)', border: '1px solid var(--color-border)' }}>
+                        {p}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {result.coincidencias.length === 0 ? (

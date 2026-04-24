@@ -83,17 +83,17 @@ export default function ItemsTable({ data = [], globalFilter, onEdit }) {
         <img
           src={getValue()}
           alt="artículo"
-          width={40}
-          height={40}
+          width={56}
+          height={56}
           loading="lazy"
           className="rounded-md object-cover"
-          style={{ width: 40, height: 40 }}
+          style={{ width: 56, height: 56 }}
         />
       ) : (
         <div
           className="rounded-md flex items-center justify-center text-xs"
           style={{
-            width: 40, height: 40,
+            width: 56, height: 56,
             background: 'var(--color-surface-offset)',
             color: 'var(--color-text-faint)'
           }}
@@ -101,7 +101,7 @@ export default function ItemsTable({ data = [], globalFilter, onEdit }) {
           —
         </div>
       )
-    },
+    },  
     {
       id: 'acciones',
       header: '',

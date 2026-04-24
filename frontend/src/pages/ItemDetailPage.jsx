@@ -5,9 +5,9 @@ import { useItem, useDeleteItem } from '../hooks/useItems'
 import { useAuth } from '../context/AuthContext'
 import MovementsPanel from '../components/MovementsPanel'
 import ItemForm from '../components/ItemForm'
+import MoveItemModal from '../components/MoveItemModal'
+import ChangeQuantityModal from '../components/ChangeQuantityModal'
 
-const [showMove, setShowMove] = useState(false)
-const [showQty, setShowQty]   = useState(false)
 
 function DetailRow({ icon: Icon, label, value }) {
   if (!value && value !== 0) return null
@@ -31,6 +31,9 @@ export default function ItemDetailPage() {
   const { data: item, isLoading } = useItem(id)
   const deleteItem = useDeleteItem()
   const [showEdit, setShowEdit] = useState(false)
+  const [showMove, setShowMove] = useState(false)
+  const [showQty, setShowQty]   = useState(false)
+  const [showImage, setShowImage] = useState(false)
 
   async function handleDelete() {
     if (!confirm(`¿Eliminar "${item.nombre}"? Esta acción no se puede deshacer.`)) return
@@ -139,7 +142,8 @@ export default function ItemDetailPage() {
                 width={800}
                 height={300}
                 loading="lazy"
-                className="w-full object-cover"
+                onClick={() => setShowImage(true)}
+                className="w-full object-cover cursor-pointer"
                 style={{ maxHeight: 280 }}
               />
             )}
@@ -205,6 +209,21 @@ export default function ItemDetailPage() {
       </div>
       {showMove && <MoveItemModal item={item} onClose={() => setShowMove(false)} />}
       {showQty  && <ChangeQuantityModal item={item} onClose={() => setShowQty(false)} />}
+      {showImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'oklch(0 0 0 / 0.85)' }}
+          onClick={() => setShowImage(false)}
+        >
+          <img
+            src={item.imagen_url}
+            alt={item.nombre}
+            className="rounded-xl object-contain"
+            style={{ maxWidth: '90vw', maxHeight: '90vh' }}
+            onClick={e => e.stopPropagation()}
+          />
+        </div>
+      )}
 
       {showEdit && (
         <ItemForm item={item} onClose={() => setShowEdit(false)} />

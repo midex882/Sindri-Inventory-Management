@@ -42,6 +42,7 @@ export const authApi = {
   getMe: () => api.get('/auth/me'),
   getUsers: () => api.get('/auth/users'),
   updateRole: (userId, role) => api.patch(`/auth/users/${userId}/role`, { role }),
+  updateFamilia: (userId, familia) => api.patch(`/auth/users/${userId}/familia`, { familia }),
 }
 
 export default api
