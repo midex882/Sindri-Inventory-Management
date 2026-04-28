@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Package, LogOut, Users, ChevronDown } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useState } from 'react'
+import { Package, LogOut, Users, ChevronDown, Shirt } from 'lucide-react'
 
 const navItems = [
   { to: '/items', icon: Package, label: 'Inventario' },
@@ -9,7 +9,6 @@ const navItems = [
 
 export default function Sidebar() {
   const { profile, logout, isAdmin } = useAuth()
-    console.log('Sidebar profile:', profile)
   const navigate = useNavigate()
   const [accountOpen, setAccountOpen] = useState(false)
 
@@ -31,11 +30,11 @@ export default function Sidebar() {
         className="flex items-center gap-2 px-5 py-5"
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
-        <svg width="28" height="28" viewBox="0 0 36 36" fill="none" aria-label="Sindri">
-          <rect width="36" height="36" rx="8" fill="var(--color-primary)" opacity="0.15"/>
-          <path d="M10 12h6l2 4-2 4h-6l2-4-2-4z" fill="var(--color-primary)"/>
-          <path d="M18 12h8v2h-8v-2zM18 17h8v2h-8v-2zM18 22h5v2h-5v-2z" fill="var(--color-text-muted)"/>
-        </svg>
+        <img
+          src="/logo.png"
+          alt="Sindri"
+          className="w-16 h-16 object-contain"
+        />
         <span style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--color-text)' }}>
           Sindri
         </span>
@@ -59,7 +58,21 @@ export default function Sidebar() {
             {label}
           </NavLink>
         ))}
-
+        {(profile?.familia || isAdmin) && (
+          <NavLink
+            to="/wardrobe"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
+                isActive
+                  ? 'text-[var(--color-primary)] bg-[var(--color-primary-highlight)]'
+                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-offset)]'
+              }`
+            }
+          >
+            <Shirt size={16} />
+            Armario
+          </NavLink>
+        )}
         {isAdmin && (
           <NavLink
             to="/users"

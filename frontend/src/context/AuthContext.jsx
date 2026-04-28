@@ -39,15 +39,12 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (!mounted) return
-        console.log('Auth event:', event)
-
         if (event === 'INITIAL_SESSION' && session?.user) {
           setUser(session.user)
           try {
             const { data } = await authApi.getMe()
             if (mounted) setProfile(data)
           } catch (e) {
-            console.error('getMe error:', e.response?.status, e.response?.data)
             if (mounted) setProfile(null)
           } finally {
             if (mounted) setLoading(false)
@@ -74,8 +71,8 @@ export function AuthProvider({ children }) {
 
   const isAdmin = profile?.role === 'admin'
   const isViewer   = profile?.role === 'viewer'
-  const isFamilia  = profile?.familia === true   // columna 'familia' bool en tu tabla profiles
-  const isEditor   = isAdmin                     // solo admin puede editar/añadir/borrar
+  const isFamilia  = profile?.familia === true  
+  const isEditor   = isAdmin                    
 
   const value = {
     user,

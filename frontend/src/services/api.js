@@ -8,7 +8,7 @@ const api = axios.create({
 api.interceptors.request.use(async (config) => {
   const { data: { session } } = await supabase.auth.getSession()
   if (session?.access_token) {
-    config.headers.Authorization = `Bearer ${session.access_token}`
+    config.headers['Authorization'] = `Bearer ${session.access_token}`
   }
   return config
 })
@@ -43,6 +43,14 @@ export const authApi = {
   getUsers: () => api.get('/auth/users'),
   updateRole: (userId, role) => api.patch(`/auth/users/${userId}/role`, { role }),
   updateFamilia: (userId, familia) => api.patch(`/auth/users/${userId}/familia`, { familia }),
+}
+
+export const wardrobeApi = {
+  list: (params) => api.get('/wardrobe/', { params }),
+  get: (id) => api.get(`/wardrobe/${id}`),
+  create: (formData) => api.post('/wardrobe/', formData),
+  update: (id, formData) => api.patch(`/wardrobe/${id}`, formData),
+  delete: (id) => api.delete(`/wardrobe/${id}`),
 }
 
 export default api

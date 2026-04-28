@@ -5,12 +5,11 @@ import LoginPage from './pages/LoginPage'
 import ItemsPage from './pages/ItemsPage'
 import ItemDetailPage from './pages/ItemDetailPage'
 import UsersPage from './pages/UsersPage'
+import WardrobePage from './pages/WardrobePage'
+import WardrobeDetailPage from './pages/WardrobeDetailPage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
-
-  console.log('ProtectedRoute — loading:', loading, 'user:', user?.email)
-
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-3">
@@ -25,6 +24,15 @@ function ProtectedRoute({ children }) {
   if (!user) return <Navigate to="/login" replace />
   return children
 }
+
+
+function FamiliaRoute({ children }) {
+  const { profile, loading, isAdmin } = useAuth()
+  if (loading) return null
+  if (!profile?.familia && !isAdmin) return <Navigate to="/items" replace />
+  return children
+}
+
 
 export default function App() {
   return (
@@ -43,6 +51,8 @@ export default function App() {
           <Route path="items" element={<ItemsPage />} />
           <Route path="items/:id" element={<ItemDetailPage />} />
           <Route path="users" element={<UsersPage />} />
+          <Route path="wardrobe" element={<FamiliaRoute><WardrobePage /></FamiliaRoute>} />
+          <Route path="wardrobe/:id" element={<WardrobeDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
