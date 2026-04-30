@@ -14,7 +14,7 @@ uvicorn app.main:app --reload
 
 FRONTEND
 
-cd Sindri\frontend
+cd frontend
 
 npm install
 

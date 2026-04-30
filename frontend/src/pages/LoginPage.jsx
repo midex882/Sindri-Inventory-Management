@@ -15,16 +15,13 @@ export default function LoginPage() {
       <div className="w-full max-w-sm mx-4">
 
         {/* Logo */}
-        <div className="flex items-center gap-3 mb-10 justify-center">
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-label="Sindri logo">
-            <rect width="36" height="36" rx="8" fill="var(--color-primary)" opacity="0.15"/>
-            <path d="M10 12h6l2 4-2 4h-6l2-4-2-4z" fill="var(--color-primary)"/>
-            <path d="M18 12h8v2h-8v-2zM18 17h8v2h-8v-2zM18 22h5v2h-5v-2z" fill="var(--color-text-muted)"/>
-          </svg>
-          <span
-            style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 600 }}
-            className="text-[var(--color-text)]"
-          >
+        <div className="w-full max-w-sm mx-4 flex justify-center gap-2 items-center mb-8">
+          <img
+            src="/logo.png"
+            alt="Sindri"
+            className="w-16 h-16 object-contain"
+          />
+          <span style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--color-text)' }}>
             Sindri
           </span>
         </div>
