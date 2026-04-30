@@ -12,6 +12,7 @@ app = FastAPI(
 origins = [
     "http://localhost:5173",
     "http://localhost:4173",
+    "https://sindri-inventory-management.vercel.app/",
     os.getenv("FRONTEND_URL", ""),
 ]
 
